@@ -153,6 +153,20 @@ AdviCAR is currently planned as a system with the following conceptual flow:
    - generate final output with reasoning and buying advice
 
 ---
+## Project Structure
+project/
+│
+├── api
+├── models
+├── ingestion
+├── retrieval
+│   ├── structured
+│   └── rag
+├── llm
+├── storage
+├── evaluation
+
+---
 
 ## Current Design Principles
 
