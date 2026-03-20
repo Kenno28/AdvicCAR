@@ -1,6 +1,6 @@
 ## LLM Choice
 
-For the current version of AdviCAR, I selected **OpenAI GPT-4 Nano**.
+For the current version of AdviCAR, I selected **OpenAI GPT-5 Nano**.
 
 This decision is mainly pragmatic. At this stage, the goal of the project is not to run extensive cross-model benchmarks, but to build a working end-to-end system with a reliable and lightweight language model.
 

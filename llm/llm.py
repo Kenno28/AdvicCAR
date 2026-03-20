@@ -4,7 +4,7 @@ from openai import OpenAI
 load_dotenv()
 client = OpenAI()
 
-def send_user_message(user_input: str, history, context:str):
+def send_user_message(user_input: str, history: list[str], context:str):
     return ""
 
 
@@ -35,7 +35,7 @@ def send_system_message(prompt:str, model:str="gpt-5-nano") -> str:
     
     return response.output_text
 
-def extract_car_markdown(file:str, path:str | None = None) -> str:
+def extract_car_markdown(file:str, path:str | None = None) -> tuple[str, str]:
     """
     Saves the given text as a Markdown file in the specified directory.
 
@@ -58,6 +58,7 @@ def extract_car_markdown(file:str, path:str | None = None) -> str:
     PROMPT = f"""
     You are to create the content for a Markdown file based on the information provided below. The content is about a car. You should structure it as follows:
 
+    Title: Name of the Document
     Make: The make of the car
     Model: The model of the car
     Engine: The engine
@@ -73,6 +74,10 @@ def extract_car_markdown(file:str, path:str | None = None) -> str:
     """
 
     try:
-        return send_system_message(prompt=PROMPT)
+        response = send_system_message(prompt=PROMPT)
+
+        title = response[response.find("Title:") + len("Title:"): response.find("\n")]
+
+        return response, title
     except Exception as e:
         raise Exception(f"OpenAI Response Error: {e}")

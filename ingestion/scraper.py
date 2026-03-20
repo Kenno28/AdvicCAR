@@ -76,8 +76,6 @@ def extract_information_from_page(url:str):
         url (str): URL link to the Page
     """
     content = get_page_content(url)
-
-    file_content = get_page_content(content)
-    markdown_content = extract_car_markdown(file_content)
-    save_markdown(markdown_content, "TEST")
+    markdown_content, title = extract_car_markdown(content)
+    save_markdown(markdown_content, title)
 
