@@ -1,11 +1,60 @@
 from dotenv import load_dotenv
 from openai import OpenAI
+from retrieval.retrieve import retrieve
+from openai.types.chat import ChatCompletionMessageParam
 
 load_dotenv()
 client = OpenAI()
 
-def send_user_message(user_input: str, history: list[str], context:str):
-    return ""
+def message(prompt:str, contexts, history:list[ChatCompletionMessageParam] | None = None) -> list[ChatCompletionMessageParam]:
+    context = "\n\n".join(doc.page_content for doc in contexts)
+    
+    system_prompt = f"""
+    You are a helpful assistant for car-related questions.
+
+    Based strictly on the provided context, determine whether the car is overpriced or fairly priced.
+    Justify your answer and explain the strengths and weaknesses of both the car and its model.
+
+    Be accurate and do not use any external knowledge. Only rely on the given context.
+    If the context does not contain enough information, clearly state that you cannot answer.
+
+    Relevant context:
+    {context}
+    """
+
+    messages: list[ChatCompletionMessageParam] = [
+        {"role": "system", "content": system_prompt}
+    ]
+
+    if history:
+        messages.extend(history)
+
+    messages.append({"role": "user", "content": prompt})
+    return messages
+
+def send_user_message(user_input: str, history: list[ChatCompletionMessageParam] |None = None, model:str="gpt-5-nano") -> str|None:
+    """Sends a prompt to an OpenAI model and returns the generated response text.
+
+    Args:
+        user_input (str): The users input
+        history (list[str]): history of the chat
+
+    Returns:
+        str:  Answer of the LLM
+    """
+
+    context = retrieve(user_input)
+
+    print(f"Context: {context}")
+
+    messages = message(user_input, context, history)
+        
+    response = client.chat.completions.create(
+        model=model,
+        messages=messages
+    )
+
+    return response.choices[0].message.content
 
 
 

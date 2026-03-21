@@ -208,37 +208,22 @@ In early versions, evaluation will likely be based on **manual test cases** and 
 
 ---
 
-## Planned Limitations of V1
-
-Version 1 will **not** try to solve everything.
-
-### Out of Scope for V1
-- multiple brands at once
-- large-scale live scraping
-- full production deployment
-- image-based vehicle analysis
-- alerts / watchlists
-- advanced valuation models
-- perfect market price prediction
-
----
-
 ## Roadmap
 
 ### V1
-- single brand or narrow model family
-- listing input
-- structured comparison
-- RAG-based model knowledge
-- simple LLM output
-- basic manual evaluation
+- single brand or narrow model family ✅
+- listing input ✅
+- RAG-based model knowledge ✅
+- simple LLM output ✅
 
 ### V2
-- stronger comparison logic
+- better error handling
 - cleaner data extraction
-- improved retrieval quality
-- more robust evaluation
-- better output formatting
+- improved input formatting
+- improved output formatting
+- structured comparison output
+- basic manual retrieval evaluation
+- basic manual answer quality evaluation
 
 ### Future Flagship Version
 - API layer

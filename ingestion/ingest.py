@@ -44,10 +44,10 @@ def create_embeddings(chunks, path:str):
     Returns:
         Chroma: The created and persisted Chroma vector store instance.
     """
-    embedding = HuggingFaceEmbeddings(model_name="all-mpnet-base-v2")
-
+    embedding = HuggingFaceEmbeddings(model_name="all-mpnet-base-v2",  model_kwargs={"device": "cuda"})
+    
     if not Path(path).exists():
-        os_path =  os.getenv("SAVE_PATH")
+        os_path =  os.getenv("DB_PATH")
         if not os_path:
             raise ValueError("No valid Path")
         else:
