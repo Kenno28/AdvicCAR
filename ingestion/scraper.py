@@ -26,7 +26,10 @@ def get_page_content(url:str) -> str:
             requests.RequestException: If the HTTP request fails.
     """
     
-    if not url.startswith("https://"):
+    if type(url) != str:
+        raise TypeError(f"url is not a str. It is {type(url)}")
+
+    if not url.startswith("http"):
         raise ValueError("Link is not valid.")
     
     with sync_playwright() as p:
@@ -46,24 +49,30 @@ def get_page_content(url:str) -> str:
             locale="de-DE"
         )
         page = context.new_page()
-
-        page.goto(url, wait_until="domcontentloaded")
-        page.wait_for_timeout(3000)
-
+        
+        response = page.goto(url, wait_until="domcontentloaded")
+        if not response:
+            raise ValueError(f"Page returned None for url: {url}")
+        
+        if hasattr(response, "status"):
+            status = str(response.status)
+            if status.startswith("5") or status.startswith("4"):
+                raise ConnectionError(f"Status Code was {status}")
+        
         content = page.content()
         browser.close()
+    
+    if len(content) == 0:
+        raise ValueError("No Content was retrieved.")
+         
+    # Remove tags
+    soup = BeautifulSoup(content, "html.parser")
 
+    for tag in soup(["script", "style"]):
+            tag.decompose()
 
-    if len(content) > 0:
-        # Remove tags
-        soup = BeautifulSoup(content, "html.parser")
+    return soup.get_text() + f"\n\n\n URL={url}"
 
-        for tag in soup(["script", "style"]):
-             tag.decompose()
-
-        return soup.get_text() + f"\n\n\n URL={url}"
-    else:
-        raise Exception("Scraped Content is empty")
         
     
 
