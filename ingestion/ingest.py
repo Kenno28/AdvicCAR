@@ -3,11 +3,12 @@ from dotenv import load_dotenv
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_core.documents import Document
 from pathlib import Path
 
 load_dotenv()
 
-def create_chunks(documents):
+def create_chunks(documents: list[Document]) -> list[Document]:
     """
     Splits a list of documents into smaller overlapping text chunks.
 
@@ -22,10 +23,26 @@ def create_chunks(documents):
     Returns:
         list: A list of chunked document objects.
     """
+    if len(documents) == 0:
+        raise ValueError("Documents are empty")
+
+    for index, document in enumerate(documents):
+
+        if not hasattr(document, "page_content"):
+            raise AttributeError(f"Document at {index} has not a Attribute page_content.")
+
+        if type(document.page_content) != str:
+            raise TypeError(f"Document at {index} Attribute page_content is not a str. It is {type(document.page_content)}")
+        
+        if len(document.page_content.strip()) == 0:
+            raise ValueError(f"Document content is empty. Index {index}")
+
+
     splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=200)
     return splitter.split_documents(documents)
 
-def create_embeddings(chunks, path:str):
+
+def create_embeddings(chunks:list[Document], path:str) -> Chroma:
     """
     Creates vector embeddings from text chunks and stores them in a persistent vector database.
 
@@ -46,12 +63,15 @@ def create_embeddings(chunks, path:str):
     """
     embedding = HuggingFaceEmbeddings(model_name="all-mpnet-base-v2",  model_kwargs={"device": "cuda"})
     
+    
+    if len(path) == 0:
+        raise ValueError("Given Path is empty.")
+    
     if not Path(path).exists():
-        os_path =  os.getenv("DB_PATH")
-        if not os_path:
-            raise ValueError("No valid Path")
-        else:
-            path = os_path
+        raise ValueError(f"Path does not exists. Given Path: {path}")
+
+    if len(chunks) == 0:
+        raise ValueError("Chunks list is empty.")
 
     vector = Chroma.from_documents(
         documents=chunks, embedding=embedding, persist_directory=path
