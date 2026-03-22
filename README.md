@@ -217,7 +217,7 @@ In early versions, evaluation will likely be based on **manual test cases** and 
 - simple LLM output ✅
 
 ### V2
-- better error handling
+- better error handling ✅
 - cleaner data extraction
 - improved input formatting
 - improved output formatting
