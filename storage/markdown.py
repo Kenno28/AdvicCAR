@@ -5,29 +5,41 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def save_markdown(markdown:str, filename:str , path:str|None = None):
-    """Saves the given Content as a Markdown File
+def save_markdown(markdown:str, filename:str , path:str):
+    """
+    Saves the given content as a Markdown (.md) file at the specified location.
+
+    The function validates the input parameters and writes the content to a file
+    using UTF-8 encoding. If the target directory does not exist, an error is raised.
 
     Args:
-        markdown (str): The content of the Markdown
-        filename (str): Name of the File
-        path (str | None, optional): Where to save the File. Defaults to None.
+        markdown (str): The content to be written into the Markdown file.
+        filename (str): The name of the file without extension.
+        path (str): The directory path where the file should be saved.
+
+    Raises:
+        ValueError: If `markdown`, `filename`, or `path` is empty or contains only whitespace.
+        NotADirectoryError: If the specified path does not exist.
+
+    Returns:
+        None
     """
-    try:
-        if not path:
-            SAVE_PATH = os.getenv("SAVE_PATH")
-            if not SAVE_PATH:
-                raise ValueError("SAVE_PATH environment variable is not set")
-            path = SAVE_PATH
-
-        base_path = Path(path) if path else Path.cwd()
-        full_path = base_path / f"{filename}.md"
-
-        full_path.parent.mkdir(parents=True, exist_ok=True)
-
-        with open(full_path, "w", encoding="utf-8") as f:
-            f.write(f"{markdown}")
-    except Exception as e:
-        raise Exception(f"Error on save. Error: {e}")
+    if len(markdown.strip()) == 0:
+        raise ValueError("Markdown is empty")
     
+    if len(filename.strip()) == 0:
+        raise ValueError("Filename is empty")
+    
+    if len(path.strip()) == 0:
+        raise ValueError("Path is empty")
+    
+    if not Path(path).exists():
+        raise NotADirectoryError("Path does not exists")
+
+    full_path = Path(path)/ f"{filename}.md"
+
+    with open(full_path, "w", encoding="utf-8") as f:
+        f.write(markdown)
+
+
     
