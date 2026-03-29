@@ -1,11 +1,9 @@
 from pathlib import Path
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
+from typing import Type
+from models.markdown_car import Markdown_Car
 
 
-def save_markdown(markdown:str, filename:str , path:str):
+def save_markdown(markdown:Markdown_Car, filename:str , path:str):
     """
     Saves the given content as a Markdown (.md) file at the specified location.
 
@@ -13,7 +11,7 @@ def save_markdown(markdown:str, filename:str , path:str):
     using UTF-8 encoding. If the target directory does not exist, an error is raised.
 
     Args:
-        markdown (str): The content to be written into the Markdown file.
+        markdown (Markdown_Car): The content to be written into the Markdown file.
         filename (str): The name of the file without extension.
         path (str): The directory path where the file should be saved.
 
@@ -24,8 +22,6 @@ def save_markdown(markdown:str, filename:str , path:str):
     Returns:
         None
     """
-    if len(markdown.strip()) == 0:
-        raise ValueError("Markdown is empty")
     
     if len(filename.strip()) == 0:
         raise ValueError("Filename is empty")
@@ -39,7 +35,7 @@ def save_markdown(markdown:str, filename:str , path:str):
     full_path = Path(path)/ f"{filename}.md"
 
     with open(full_path, "w", encoding="utf-8") as f:
-        f.write(markdown)
+        markdown.model_dump_json(indent=2)
 
 
     

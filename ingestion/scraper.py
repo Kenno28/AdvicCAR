@@ -2,7 +2,10 @@ from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 from llm.llm import extract_car_markdown
 from storage.markdown import save_markdown
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
 """
 ONLY FOR EXTRACTING WEBPAGES AND CREATING MARKDOWN FILES. NOT FOR PROD
@@ -85,6 +88,12 @@ def extract_information_from_page(url:str):
         url (str): URL link to the Page
     """
     content = get_page_content(url)
-    markdown_content, title = extract_car_markdown(content)
-    save_markdown(markdown_content, title)
+    markdown_content = extract_car_markdown(content)
+    
+    SAVE_PATH = os.getenv("SAVE_PATH")
+
+    if not SAVE_PATH:
+        raise EnvironmentError("Env Variable not found")
+
+    save_markdown(markdown_content, markdown_content.title, SAVE_PATH)
 
