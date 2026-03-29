@@ -72,7 +72,7 @@ def message(prompt:str, contexts:list[Document] | None = None, system_prompt: st
     messages.append({"role": "user", "content": prompt})
     return messages
 
-def send_user_message(user_input: str, history: list[ChatCompletionMessageParam]|None = None, model:str="gpt-5-nano") -> str|None:
+def send_user_message(user_input: str, history: list[ChatCompletionMessageParam]|None = None, model:str="gpt-5-nano", query_rewrite: str|None = None) -> str|None:
     """Sends a prompt to an OpenAI model and returns the generated response text.
 
     Args:
@@ -91,7 +91,9 @@ def send_user_message(user_input: str, history: list[ChatCompletionMessageParam]
     if not path:
         raise EnvironmentError("Save path couldnt be found!")
 
-    context = retrieve(user_input, path)
+    query_req = query_rewrite if query_rewrite else user_input
+
+    context = retrieve(query_req, path)
 
     messages = message(user_input, context, None, history)
         

@@ -35,7 +35,7 @@ def save_markdown(markdown:Markdown_Car, filename:str , path:str):
     full_path = Path(path)/ f"{filename}.md"
 
     with open(full_path, "w", encoding="utf-8") as f:
-        markdown.model_dump_json(indent=2)
+        f.write(markdown.model_dump_json(indent=2))
 
 
     

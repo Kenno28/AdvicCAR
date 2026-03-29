@@ -29,9 +29,8 @@ def user_request(input:str) -> str:
     
     re_query = rewrite_query(input)
 
-    input = re_query if re_query else input
-
-    response = send_user_message(input)
+   
+    response = send_user_message(input, query_rewrite=re_query)
 
     if not response:
         raise ValueError("RESPONSE EMPTY")
